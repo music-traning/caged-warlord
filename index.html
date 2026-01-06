@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>CAGED Warlord: Grandmaster Final</title>
+    <title>CAGED Warlord: Loop Fixed</title>
     <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.js"></script>
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
@@ -74,37 +74,25 @@
             .sidebar { 
                 width: 100%; 
                 height: auto;
-                max-height: 30vh;
+                max-height: 35vh;
                 padding: 10px; 
                 flex-direction: row; 
                 flex-wrap: wrap;
-                align-items: center;
+                align-items: flex-start;
                 gap: 10px;
+                overflow-y: auto;
             }
             
             .sidebar > div { flex: 1; min-width: 140px; }
-            .stat-box { order: 1; padding: 5px 10px; }
-            .play-btn { padding: 10px !important; font-size: 0.9rem !important; margin-top: 0 !important; width: 100%; }
+            .stat-box { order: 1; padding: 5px 10px; width: 100%; flex: 100% !important; }
+            .control-group { padding: 8px; }
+            
+            .play-btn { padding: 10px !important; font-size: 0.9rem !important; margin-top: 0 !important; width: 100%; order: 10; }
             
             .stage { 
-                height: 70vh; 
+                height: 65vh; 
                 flex: 1;
             }
-        }
-
-        /* Ultra Compact Mode for iPhone SE height */
-        @media (max-height: 700px) {
-            .game-hud { padding: 5px 0 !important; min-height: auto !important; }
-            .chord-display { font-size: 2.5rem !important; }
-            .feedback-text { height: 24px; font-size: 1.2rem; margin-bottom: 2px; }
-            .metronome-container { margin-bottom: 5px !important; height: 4px; }
-            .chord-container { padding: 5px 20px !important; border-radius: 8px; }
-            .chord-detail { font-size: 0.8rem; margin-top: 0; }
-            
-            .sidebar { padding: 5px; gap: 5px; }
-            .control-group { padding: 5px; }
-            label { font-size: 0.6rem; margin-bottom: 2px; }
-            select, button, input { padding: 4px; font-size: 0.8rem; margin-bottom: 2px; }
         }
 
         /* UI Components */
@@ -188,7 +176,7 @@
             display: flex; 
             align-items: center; 
             justify-content: center;
-            padding: 10px 0 30px 0; /* More bottom padding for footer */
+            padding: 10px 0 30px 0; 
             position: relative;
             min-height: 0;
         }
@@ -278,7 +266,7 @@
     
     <div v-if="!audioInitialized" style="position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.95); z-index:999; display:flex; flex-direction:column; justify-content:center; align-items:center;">
         <h1 style="color:var(--accent); letter-spacing:4px; margin-bottom:10px;">CAGED WARLORD</h1>
-        <div style="color:var(--text-muted); font-size:0.9rem; letter-spacing:2px; margin-bottom:40px;">GRANDMASTER EDITION</div>
+        <div style="color:var(--text-muted); font-size:0.9rem; letter-spacing:2px; margin-bottom:40px;">GRANDMASTER LOOP FIX</div>
         <button @click="initAudioEngine" style="width:200px; padding:15px; border-radius:30px; background:var(--primary); color:#000; font-size:1.1rem; border:none; cursor:pointer; font-weight:bold;">
             ENTER SESSION
         </button>
@@ -319,12 +307,21 @@
             <label>SETUP</label>
             <div style="display:flex; gap:5px;">
                 <button @click="isBlind = !isBlind" :style="{background: isBlind ? '#333' : 'var(--accent)', color: isBlind ? '#888':'#000'}">
-                    {{ isBlind ? 'Blind' : 'Guide' }}
+                    {{ isBlind ? 'Blind: ON' : 'Guide: ON' }}
                 </button>
                 <div style="flex:1; border:1px dashed #444; padding:2px; display:flex; align-items:center; justify-content:center;">
                     <label style="margin:0; margin-right:5px; font-size:0.6rem;">LOOP</label>
                     <input type="checkbox" v-model="practiceMode" style="width:auto; margin:0;">
                 </div>
+            </div>
+
+            <div v-if="practiceMode" style="margin-top:5px; padding-top:5px; border-top:1px dashed #444;">
+                <div style="display:flex; justify-content:space-between; font-size:0.7rem; color:#aaa;">
+                    <span>Start: {{practiceRange.start+1}}</span>
+                    <span>End: {{practiceRange.end+1}}</span>
+                </div>
+                <input type="range" v-model.number="practiceRange.start" :max="currentSong.progression.length-1" min="0" style="margin-bottom:0;">
+                <input type="range" v-model.number="practiceRange.end" :max="currentSong.progression.length-1" min="0">
             </div>
             
             <label style="margin-top:5px;">TONES</label>
@@ -383,7 +380,7 @@
                                  :class="[
                                     getNoteInfo(s, zoneStart+index-1).class,
                                     { 
-                                        visible: isNoteVisible(s, zoneStart+index-1),
+                                        visible: isNoteVisible(s, zoneStart+index-1) && (!isBlind || isNoteRevealed(s, zoneStart+index-1)),
                                         hit: isNoteRevealed(s, zoneStart+index-1)
                                     }
                                  ]"
@@ -582,8 +579,17 @@ createApp({
             Tone.Transport.cancel();
 
             score.value=0; combo.value=0; hits.value=0; misses.value=0; perfectHits.value=0;
-            currentChordIndex.value = -1;
+            
+            // ★★★ 修正箇所: ループモードなら開始位置をセット ★★★
             Object.keys(revealedNotes).forEach(k => delete revealedNotes[k]);
+            
+            if(practiceMode.value) {
+                // ループ時は、開始小節の「1つ前」にインデックスをセットする
+                // (startMusicLoopに入った瞬間に +1 されるため)
+                currentChordIndex.value = practiceRange.start - 1;
+            } else {
+                currentChordIndex.value = -1;
+            }
             
             isPlaying.value = true;
             Tone.Transport.bpm.value = userBpm.value;
@@ -630,7 +636,10 @@ createApp({
                 if(beat === 0) {
                     if(practiceMode.value) {
                         let next = currentChordIndex.value + 1;
-                        if(next > practiceRange.end) next = practiceRange.start;
+                        // ループ範囲外、または開始前なら、開始地点へ強制移動
+                        if(next > practiceRange.end || next < practiceRange.start) {
+                            next = practiceRange.start;
+                        }
                         currentChordIndex.value = next;
                     } else {
                         currentChordIndex.value = (currentChordIndex.value + 1) % prog.length;
@@ -648,7 +657,9 @@ createApp({
                 
                 let nextIdx = (currentChordIndex.value + 1) % prog.length;
                 if(practiceMode.value && currentChordIndex.value === practiceRange.end) nextIdx = practiceRange.start;
-                const nextRootVal = NOTES.indexOf(prog[nextIdx].root);
+                // まだ初期状態の場合は次のコードを参照しないように安全策
+                const nextChordObj = prog[nextIdx] || prog[0];
+                const nextRootVal = NOTES.indexOf(nextChordObj.root);
 
                 let bassNote;
                 if(beat === 0) bassNote = c.root + "2"; 
