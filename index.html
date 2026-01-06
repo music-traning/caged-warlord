@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>CAGED Warlord: SE Optimized</title>
+    <title>CAGED Warlord: Grandmaster Final</title>
     <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.js"></script>
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
@@ -67,29 +67,27 @@
             overflow: hidden;
         }
 
-        /* --- MOBILE & SMALL SCREEN OPTIMIZATION (iPhone SE Fixes) --- */
+        /* --- MOBILE & SMALL SCREEN OPTIMIZATION --- */
         @media (max-width: 900px) {
             #app { flex-direction: column; }
             
-            /* Sidebar shrinks */
             .sidebar { 
                 width: 100%; 
                 height: auto;
-                max-height: 30vh; /* Limit sidebar height */
+                max-height: 30vh;
                 padding: 10px; 
-                flex-direction: row; /* Horizontal layout for controls on mobile */
+                flex-direction: row; 
                 flex-wrap: wrap;
                 align-items: center;
                 gap: 10px;
             }
             
-            /* Make controls compact on mobile sidebar */
             .sidebar > div { flex: 1; min-width: 140px; }
             .stat-box { order: 1; padding: 5px 10px; }
             .play-btn { padding: 10px !important; font-size: 0.9rem !important; margin-top: 0 !important; width: 100%; }
             
             .stage { 
-                height: 70vh; /* Remaining space */
+                height: 70vh; 
                 flex: 1;
             }
         }
@@ -103,7 +101,6 @@
             .chord-container { padding: 5px 20px !important; border-radius: 8px; }
             .chord-detail { font-size: 0.8rem; margin-top: 0; }
             
-            /* Squeeze sidebar */
             .sidebar { padding: 5px; gap: 5px; }
             .control-group { padding: 5px; }
             label { font-size: 0.6rem; margin-bottom: 2px; }
@@ -134,7 +131,7 @@
         }
         .play-btn.active { background: var(--warn); box-shadow: 0 0 15px rgba(255, 171, 0, 0.3); }
 
-        /* HUD - Flexible Size */
+        /* HUD */
         .game-hud {
             width: 100%;
             padding: 15px 0;
@@ -184,23 +181,23 @@
         }
         .chord-detail { color: #aaa; font-size: 1rem; margin-top: 5px; letter-spacing: 2px; text-transform: uppercase; }
 
-        /* Fretboard - Flex Grow to fill remaining space */
+        /* Fretboard */
         .fretboard-wrapper { 
             flex: 1; 
             width: 100%; 
             display: flex; 
             align-items: center; 
             justify-content: center;
-            padding: 10px 0 20px 0;
+            padding: 10px 0 30px 0; /* More bottom padding for footer */
             position: relative;
-            min-height: 0; /* Important for flex container to shrink */
+            min-height: 0;
         }
 
         .fretboard-container { 
             width: 95%; 
             max-width: 1000px; 
             height: 100%;
-            max-height: 280px; /* Cap height on large screens */
+            max-height: 280px; 
             position: relative; 
         }
         
@@ -212,8 +209,6 @@
         }
         .string {
             position: absolute; left: 0; right: 0; 
-            /* FIXED MATH: Centers string within its grid row */
-            /* Row height is 100%/6. Center is half of that. */
             height: 1px; background: #555;
             pointer-events: none; z-index: 1;
             box-shadow: 0 1px 2px rgba(0,0,0,0.5);
@@ -226,7 +221,6 @@
         }
         .cell:active { background: rgba(255,255,255,0.05); }
 
-        /* Notes */
         .note-marker {
             width: 30px; height: 30px; border-radius: 50%;
             display: flex; justify-content: center; align-items: center;
@@ -247,7 +241,7 @@
 
         #fxCanvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 50; }
 
-        /* Summary Modal */
+        /* Modal */
         .modal-overlay {
             position: fixed; top:0; left:0; width:100%; height:100%;
             background: rgba(0,0,0,0.9); backdrop-filter: blur(8px);
@@ -265,12 +259,16 @@
 
         .practice-ui { border: 1px dashed var(--accent); padding: 5px; margin-top: 5px; border-radius: 4px; background: rgba(0, 176, 255, 0.05); }
 
+        /* FOOTER: Centered and Improved Visibility */
         .app-footer {
-            position: absolute; bottom: 2px; right: 5px;
-            font-size: 0.6rem; color: #333;
+            position: absolute; bottom: 8px; width: 100%;
+            text-align: center;
+            font-size: 0.75rem; color: #666;
             z-index: 60; pointer-events: none;
+            letter-spacing: 2px;
         }
-        .app-footer a { color: #444; text-decoration: none; pointer-events: auto; }
+        .app-footer a { color: #888; text-decoration: none; pointer-events: auto; transition: color 0.3s; }
+        .app-footer a:hover { color: var(--accent); text-decoration: underline; }
 
     </style>
 </head>
