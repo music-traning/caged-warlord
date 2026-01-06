@@ -67,6 +67,7 @@
             overflow: hidden;
         }
 
+        /* Responsive Layout Adjustments */
         @media (max-width: 900px) {
             #app { flex-direction: column; }
             .sidebar { 
@@ -79,6 +80,17 @@
             .control-group { padding: 8px; }
             .play-btn { padding: 10px !important; font-size: 0.9rem !important; margin-top: 0 !important; width: 100%; order: 10; }
             .stage { height: 65vh; flex: 1; }
+            
+            /* --- FIX: Help Button Position for Mobile --- */
+            .corner-btn {
+                bottom: auto !important; /* Cancel bottom position */
+                top: 15px !important;    /* Move to top */
+                right: 15px !important;  /* Move to right */
+                width: 45px !important;  /* Smaller size */
+                height: 45px !important;
+                font-size: 1.5rem !important;
+                box-shadow: 0 2px 8px rgba(255, 171, 0, 0.4) !important;
+            }
         }
 
         /* UI Components */
@@ -238,12 +250,14 @@
         
         /* Help Button Enhanced */
         .corner-btn { 
-            position: absolute; bottom: 30px; right: 30px; z-index: 50; 
+            position: absolute; bottom: 30px; right: 30px; z-index: 100; 
             width: 60px; height: 60px; font-size: 2rem;
             background-color: var(--warn); color: #000; border: none;
             box-shadow: 0 4px 15px rgba(255, 171, 0, 0.5);
             opacity: 1; transition: transform 0.2s;
             animation: pulse-orange 2s infinite;
+            border-radius: 50%; cursor: pointer; display: flex; justify-content: center; align-items: center;
+            font-weight: bold;
         }
         .corner-btn:hover { transform: scale(1.1); animation: none; color: #000; }
 
@@ -396,7 +410,7 @@
             </div>
         </div>
 
-        <button class="icon-btn corner-btn" @click="openTutorial">?</button>
+        <button class="corner-btn" @click="openTutorial">?</button>
 
         <footer class="app-footer">
             <a href="#" target="_blank">&copy;2026 buro</a>
@@ -682,7 +696,7 @@ createApp({
             userBpm.value = currentSong.value.bpm;
             practiceRange.start = 0;
             practiceRange.end = Math.min(3, currentSong.value.progression.length-1);
-            stopSession(false); // BUG FIX: Don't show result on song change
+            stopSession(false); 
         });
         watch(userBpm, (v) => { if(isPlaying.value) Tone.Transport.bpm.rampTo(v, 0.2); });
 
@@ -718,22 +732,18 @@ createApp({
         };
 
         const stopSession = (showResult = true) => {
-            // BUG FIX: Kill all sound immediately
             Tone.Transport.stop(); 
-            Tone.Transport.cancel(0); // Clear all scheduled events
+            Tone.Transport.cancel(0); 
             
             if(audioInitialized.value) {
-                // Force release envelope of polyphonic instruments
                 instruments.guitar.releaseAll();
                 instruments.piano.releaseAll();
-                // MonoSynth doesn't have releaseAll, but triggerRelease handles active envelope
                 instruments.bass.triggerRelease();
             }
 
             isPlaying.value = false;
             cancelAnimationFrame(animFrame);
 
-            // BUG FIX: Only show summary if explicitly requested AND hits > 0
             if(showResult && hits.value > 0) { 
                 processEndGame(); 
                 showSummary.value = true; 
