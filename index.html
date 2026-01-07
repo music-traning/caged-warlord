@@ -586,10 +586,12 @@ const c = (root, type) => {
 };
 
 /* --- SONGBOOK --- */
+/* --- SONGBOOK --- */
 const SONGBOOK = {
     Beginner: [
         { id:'autumn', title:'Autumn Leaves', key:'Gm', bpm:120, progression:[c('C','m7'),c('F','7'),c('Bb','Maj7'),c('Eb','Maj7'),c('A','m7b5'),c('D','7'),c('G','m7'),c('G','m7')] },
-        { id:'bluebossa', title:'Blue Bossa', key:'Cm', bpm:130, progression:[c('C','m7'),c('C','m7'),c('F','m7'),c('Bb','7'),c('Dm','7b5'),c('G','7alt'),c('C','m7'),c('Dm','7b5'),c('G','7alt')] },
+        // 【修正】Dm, 7b5 -> D, m7b5 に変更
+        { id:'bluebossa', title:'Blue Bossa', key:'Cm', bpm:130, progression:[c('C','m7'),c('C','m7'),c('F','m7'),c('Bb','7'),c('D','m7b5'),c('G','7alt'),c('C','m7'),c('D','m7b5'),c('G','7alt')] },
         { id:'flyme', title:'Fly Me To The Moon', key:'C', bpm:120, progression:[c('A','m7'),c('D','m7'),c('G','7'),c('C','Maj7'),c('F','Maj7'),c('B','m7b5'),c('E','7'),c('A','m7')] },
         { id:'satin', title:'Satin Doll', key:'C', bpm:110, progression:[c('D','m7'),c('G','7'),c('D','m7'),c('G','7'),c('E','m7'),c('A','7'),c('E','m7'),c('A','7')] },
         { id:'takea', title:'Take the A Train', key:'C', bpm:150, progression:[c('C','Maj7'),c('D','m7b5'),c('D','m7'),c('G','7'),c('C','Maj7'),c('C','Maj7'),c('D','m7b5'),c('G','7')] },
@@ -612,12 +614,14 @@ const SONGBOOK = {
         { id:'four', title:'Four', key:'Eb', bpm:170, progression:[c('Eb','Maj7'),c('Eb','m7'),c('Ab','7'),c('F','m7'),c('Bb','7'),c('Eb','Maj7')] }
     ],
     Advanced: [
-        { id:'giant', title:'Giant Steps', key:'Eb', bpm:220, progression:[c('B','Maj7'),c('D','7'),c('G','Maj7'),c('Bb','7'),c('Eb','Maj7'),c('Am','7'),c('D','7'),c('G','Maj7'),c('Bb','7'),c('Eb','Maj7'),c('F#','7')] },
+        // 【修正】Am, 7 -> A, m7 に変更
+        { id:'giant', title:'Giant Steps', key:'Eb', bpm:220, progression:[c('B','Maj7'),c('D','7'),c('G','Maj7'),c('Bb','7'),c('Eb','Maj7'),c('A','m7'),c('D','7'),c('G','Maj7'),c('Bb','7'),c('Eb','Maj7'),c('F#','7')] },
         { id:'countdown', title:'Countdown', key:'D', bpm:240, progression:[c('E','m7'),c('F','7'),c('Bb','Maj7'),c('Db','7'),c('Gb','Maj7'),c('A','7'),c('D','Maj7')] },
         { id:'cherokee', title:'Cherokee', key:'Bb', bpm:260, progression:[c('Bb','Maj7'),c('F','m7'),c('Bb','7'),c('Eb','Maj7'),c('Ab','7'),c('Bb','Maj7'),c('G','7'),c('C','7'),c('F','7')] },
         { id:'donna', title:'Donna Lee', key:'Ab', bpm:220, progression:[c('Ab','Maj7'),c('F','7'),c('Bb','7'),c('Bb','7'),c('Eb','m7'),c('Ab','7'),c('Db','Maj7'),c('Db','m7')] },
         { id:'confirm', title:'Confirmation', key:'F', bpm:200, progression:[c('F','Maj7'),c('E','m7b5'),c('A','7'),c('D','m7'),c('G','7'),c('C','m7'),c('F','7'),c('Bb','7')] },
-        { id:'joy', title:'Joy Spring', key:'F', bpm:190, progression:[c('F','Maj7'),c('G','m7'),c('C','7'),c('F','Maj7'),c('Bb','m7'),c('Eb','7'),c('Am','7'),c('D','7')] },
+        // 【修正】Am, 7 -> A, m7 に変更
+        { id:'joy', title:'Joy Spring', key:'F', bpm:190, progression:[c('F','Maj7'),c('G','m7'),c('C','7'),c('F','Maj7'),c('Bb','m7'),c('Eb','7'),c('A','m7'),c('D','7')] },
         { id:'moment', title:'Moments Notice', key:'Eb', bpm:230, progression:[c('E','m7'),c('A','7'),c('F','m7'),c('Bb','7'),c('Eb','Maj7'),c('Ab','m7'),c('Db','7')] },
         { id:'nardis', title:'Nardis', key:'Em', bpm:150, progression:[c('E','m7'),c('F','Maj7'),c('B','7'),c('C','Maj7'),c('A','m7'),c('F','Maj7'),c('E','Maj7')] },
         { id:'veryearly', title:'Very Early', key:'C', bpm:130, progression:[c('C','Maj7'),c('Bb','7'),c('Eb','Maj7'),c('Ab','7'),c('Db','Maj7'),c('G','7'),c('B','Maj7')] },
