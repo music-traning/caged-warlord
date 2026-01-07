@@ -586,7 +586,6 @@ const c = (root, type) => {
 };
 
 /* --- SONGBOOK --- */
-/* --- SONGBOOK --- */
 const SONGBOOK = {
     Beginner: [
         { id:'autumn', title:'Autumn Leaves', key:'Gm', bpm:120, progression:[c('C','m7'),c('F','7'),c('Bb','Maj7'),c('Eb','Maj7'),c('A','m7b5'),c('D','7'),c('G','m7'),c('G','m7')] },
@@ -1038,14 +1037,42 @@ createApp({
                 const nextChordObj = prog[nextIdx] || prog[0];
                 const nextRootVal = NOTES.indexOf(nextChordObj.root);
 
+                // --- 修正箇所: Bass Logic Fix ---
                 let bassNote;
-                if(beat === 0) bassNote = c.root + "2"; 
-                else if(beat === 1) bassNote = NOTES[(rVal + 4)%12] + "2"; 
-                else if(beat === 2) bassNote = NOTES[(rVal + 7)%12] + "2"; 
+                
+                // コードタイプに基づいて3度と5度の音程（半音数）を決定
+                let interval3 = 4; // デフォルト: 長3度 (Major 3rd)
+                let interval5 = 7; // デフォルト: 完全5度 (Perfect 5th)
+
+                // マイナー系 (m7, m7b5, dim7) は短3度 (3半音) にする
+                if (c.type.includes('m') || c.type.includes('dim')) {
+                    interval3 = 3;
+                }
+
+                // フラット5系 (m7b5, dim7) は減5度 (6半音) にする
+                if (c.type.includes('b5') || c.type.includes('dim') || c.type.includes('alt')) {
+                    interval5 = 6;
+                }
+
+                if(beat === 0) {
+                    // 1拍目: ルート
+                    bassNote = c.root + "2"; 
+                }
+                else if(beat === 1) {
+                    // 2拍目: 3度 (コードタイプに合わせて変化)
+                    bassNote = NOTES[(rVal + interval3)%12] + "2"; 
+                }
+                else if(beat === 2) {
+                    // 3拍目: 5度 (コードタイプに合わせて変化)
+                    bassNote = NOTES[(rVal + interval5)%12] + "2"; 
+                }
                 else {
+                    // 4拍目: 次のルートへのクロマチックアプローチ (変更なし)
                     const approach = (nextRootVal - 1 + 12) % 12; 
                     bassNote = NOTES[approach] + "2";
                 }
+                // --- 修正ここまで ---
+
                 instruments.bass.triggerAttackRelease(bassNote, "4n", time);
 
             }, "4n");
